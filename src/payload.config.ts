@@ -65,7 +65,7 @@ export default buildConfig({
       generateDescription: ({ doc }) => {
         if (doc.excerpt) return doc.excerpt
         if (doc.metaDescription) return doc.metaDescription
-        return 'Dr. Valerie Pinhas, Long Island sex therapist with over 30 years of experience. Compassionate, confidential therapy for individuals and couples.'
+        return 'Dr. Valerie Pinhas, Long Island sex therapist with over 50 years of experience. Compassionate, confidential therapy for individuals and couples.'
       },
     }),
     redirectsPlugin({

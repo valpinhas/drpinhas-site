@@ -4,7 +4,7 @@ import { getPayloadClient } from './utils'
 const defaultSettings = {
   siteName: 'Long Island Sex Therapy',
   tagline: 'Dr. Valerie Pinhas',
-  description: 'Dr. Valerie Pinhas is a sex therapist, psychoanalyst, and professor emeritus with over 30 years of experience serving the Long Island community.',
+  description: 'Dr. Valerie Pinhas is a sex therapist, psychoanalyst, and professor emeritus with over 50 years of experience serving the Long Island community.',
   contactEmail: 'vlp@longislandsextherapy.com',
   phoneNumber: '(516) 482-8314',
   address: 'Great Neck, Long Island, New York',
