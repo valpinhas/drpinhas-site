@@ -16,7 +16,7 @@ export default async function AboutPage() {
         <div className="container-wide">
           <h1 className="text-4xl md:text-5xl text-sage-900 mb-4">About Dr. Pinhas</h1>
           <p className="text-lg text-sage-600 prose-max">
-            Over three decades of compassionate care in sex therapy, psychoanalysis, and addictions treatment.
+            Over five decades of compassionate care in sex therapy, psychoanalysis, and addictions treatment.
           </p>
         </div>
       </section>
