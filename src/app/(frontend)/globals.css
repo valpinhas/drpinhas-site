@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream-50 text-sage-900 font-sans antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-serif;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+}
+
+@layer components {
+  /* Wide container — aligns with header and footer */
+  .container-wide {
+    @apply mx-auto max-w-6xl px-6 md:px-8;
+  }
+
+  /* Narrower container for prose/reading content — left-aligned within the wide container */
+  .container-prose {
+    @apply mx-auto max-w-6xl px-6 md:px-8;
+  }
+
+  /* Inner content max-width for readable line lengths */
+  .prose-max {
+    @apply max-w-3xl;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-2xl bg-sage-600 px-6 py-3 text-cream-50 font-medium shadow-sm transition-all duration-200 hover:bg-sage-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-sage-400 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-2xl border border-sage-300 bg-transparent px-6 py-3 text-sage-700 font-medium transition-all duration-200 hover:bg-sage-50 focus:outline-none focus:ring-2 focus:ring-sage-400 focus:ring-offset-2;
+  }
+
+  .card {
+    @apply rounded-2xl bg-white shadow-sm ring-1 ring-sage-100 transition-all duration-300 hover:shadow-md hover:ring-sage-200;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-sage-200 bg-white px-4 py-3 text-sage-900 placeholder-sage-400 focus:border-sage-500 focus:outline-none focus:ring-2 focus:ring-sage-200;
+  }
+
+  /* Consistent vertical rhythm for page sections */
+  .section-padding {
+    @apply py-16 md:py-20;
+  }
+
+  /* Hero / page header section */
+  .page-header {
+    @apply bg-gradient-to-b from-sage-50 to-cream-50 py-12 md:py-16;
+  }
+}
+
+/* Rich text content styling */
+.prose-content {
+  @apply text-sage-800 leading-relaxed;
+}
+
+.prose-content p {
+  @apply mb-5 text-lg leading-relaxed;
+}
+
+.prose-content h2 {
+  @apply mt-10 mb-4 text-2xl text-sage-900;
+}
+
+.prose-content h3 {
+  @apply mt-8 mb-3 text-xl text-sage-900;
+}
+
+.prose-content ul {
+  @apply mb-5 list-disc pl-6 space-y-2;
+}
+
+.prose-content ol {
+  @apply mb-5 list-decimal pl-6 space-y-2;
+}
+
+.prose-content li {
+  @apply text-lg leading-relaxed;
+}
+
+.prose-content blockquote {
+  @apply my-6 border-l-4 border-sage-300 pl-6 italic text-sage-700;
+}
+
+.prose-content a {
+  @apply text-sage-600 underline hover:text-sage-700;
+}
+
+.prose-content img {
+  @apply my-6 rounded-2xl;
+}
