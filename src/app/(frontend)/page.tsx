@@ -38,6 +38,9 @@ export default async function HomePage() {
               <Link href="/about" className="btn-secondary">
                 Learn About Dr. Pinhas
               </Link>
+              <Link href="/blog" className="btn-secondary">
+                Read My Blog
+              </Link>
             </div>
           </div>
         </div>
