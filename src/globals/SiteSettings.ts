@@ -25,7 +25,7 @@ export const SiteSettings: GlobalConfig = {
       name: 'description',
       type: 'textarea',
       defaultValue:
-        'Dr. Valerie Pinhas is a sex therapist, psychoanalyst, and professor emeritus with over 30 years of experience serving the Long Island community.',
+        'Dr. Valerie Pinhas is a sex therapist, psychoanalyst, and professor emeritus with over 50 years of experience serving the Long Island community.',
     },
     {
       name: 'logo',

@@ -4,7 +4,7 @@ import { ProfileSidebar } from '@/components/layout/ProfileSidebar'
 
 export const metadata = {
   title: 'About Dr. Valerie Pinhas',
-  description: 'Learn about Dr. Valerie Pinhas, a sex therapist, psychoanalyst, and professor emeritus with over 30 years of experience on Long Island.',
+  description: 'Learn about Dr. Valerie Pinhas, a sex therapist, psychoanalyst, and professor emeritus with over 50 years of experience on Long Island.',
 }
 
 export default async function AboutPage() {

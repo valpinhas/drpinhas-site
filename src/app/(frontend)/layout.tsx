@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
       default: `${settings.siteName} — ${settings.tagline || 'Long Island Sex Therapy'}`,
       template: `%s | ${settings.siteName}`,
     },
-    description: settings.description || 'Dr. Valerie Pinhas, Long Island sex therapist with over 30 years of experience.',
+    description: settings.description || 'Dr. Valerie Pinhas, Long Island sex therapist with over 50 years of experience.',
     keywords: ['sex therapy', 'Long Island', 'psychotherapy', 'couples therapy', 'addictions therapy', 'psychoanalyst', 'Dr. Valerie Pinhas'],
     authors: [{ name: settings.siteName }],
     openGraph: {
