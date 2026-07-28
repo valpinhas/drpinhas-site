@@ -41,6 +41,13 @@ export const Pages: CollectionConfig = {
       },
     },
     {
+      name: 'subtitle',
+      type: 'text',
+      admin: {
+        description: 'Tagline shown below the page title.',
+      },
+    },
+    {
       name: 'excerpt',
       type: 'textarea',
       admin: {
@@ -59,6 +66,29 @@ export const Pages: CollectionConfig = {
       relationTo: 'media',
       admin: {
         position: 'sidebar',
+      },
+    },
+    {
+      name: 'showSidebar',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Show the profile sidebar on this page.',
+      },
+    },
+    {
+      name: 'layout',
+      type: 'select',
+      defaultValue: 'standard',
+      options: [
+        { label: 'Standard (content + sidebar)', value: 'standard' },
+        { label: 'Centered (no sidebar)', value: 'centered' },
+        { label: 'Full Width (no sidebar)', value: 'full-width' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'Controls the page layout.',
       },
     },
   ],

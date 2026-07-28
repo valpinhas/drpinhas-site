@@ -74,5 +74,37 @@ export const SiteSettings: GlobalConfig = {
         description: 'Professional license number(s) for the footer.',
       },
     },
+    {
+      name: 'sidebarBio',
+      type: 'textarea',
+      defaultValue:
+        'I am a therapist who has been practicing sexual therapy, addictions therapy as well as psychoanalytic psychotherapy and psychoanalysis for over 50 years.',
+      admin: {
+        description: 'Bio text shown in the profile sidebar.',
+      },
+    },
+    {
+      name: 'sidebarButtons',
+      type: 'array',
+      label: 'Sidebar Buttons',
+      defaultValue: [
+        { label: 'Learn More', url: '/about', style: 'primary' },
+        { label: 'Read My Blog', url: '/blog', style: 'secondary' },
+        { label: 'Ask a Question', url: '/ask', style: 'secondary' },
+      ],
+      fields: [
+        { name: 'label', type: 'text', required: true },
+        { name: 'url', type: 'text', required: true },
+        {
+          name: 'style',
+          type: 'select',
+          defaultValue: 'secondary',
+          options: [
+            { label: 'Primary', value: 'primary' },
+            { label: 'Secondary', value: 'secondary' },
+          ],
+        },
+      ],
+    },
   ],
 }

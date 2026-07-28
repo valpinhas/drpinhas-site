@@ -1,6 +1,20 @@
 import Link from 'next/link'
+import { getSiteSettings } from '@/lib/data'
 
-export function ProfileSidebar() {
+export async function ProfileSidebar() {
+  const settings = await getSiteSettings() as any
+
+  const bio = settings.sidebarBio ||
+    'I am a therapist who has been practicing sexual therapy, addictions therapy as well as psychoanalytic psychotherapy and psychoanalysis for over 50 years.'
+
+  const buttons = settings.sidebarButtons?.length > 0
+    ? settings.sidebarButtons
+    : [
+        { label: 'Learn More', url: '/about', style: 'primary' },
+        { label: 'Read My Blog', url: '/blog', style: 'secondary' },
+        { label: 'Ask a Question', url: '/ask', style: 'secondary' },
+      ]
+
   return (
     <aside>
       <div className="card overflow-hidden sticky top-24">
@@ -14,13 +28,18 @@ export function ProfileSidebar() {
         <div className="p-6">
           <h3 className="text-xl font-serif text-sage-900 mb-3">Dr. Valerie Pinhas</h3>
           <p className="text-sm text-sage-600 leading-relaxed mb-5">
-            I am a therapist who has been practicing sexual therapy, addictions therapy as well as
-            psychoanalytic psychotherapy and psychoanalysis for over 50 years.
+            {bio}
           </p>
           <div className="flex flex-col gap-3">
-            <Link href="/about" className="btn-primary w-full">Learn More</Link>
-            <Link href="/blog" className="btn-secondary w-full">Read My Blog</Link>
-            <Link href="/ask" className="btn-secondary w-full">Ask a Question</Link>
+            {buttons.map((btn: any, i: number) => (
+              <Link
+                key={i}
+                href={btn.url}
+                className={btn.style === 'primary' ? 'btn-primary w-full' : 'btn-secondary w-full'}
+              >
+                {btn.label}
+              </Link>
+            ))}
           </div>
         </div>
       </div>

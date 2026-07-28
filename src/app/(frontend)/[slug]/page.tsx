@@ -34,24 +34,49 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
 
   if (!page) notFound()
 
+  const showSidebar = page.showSidebar !== false
+  const layout = page.layout || 'standard'
+
   return (
     <>
       <section className="page-header">
         <div className="container-wide">
-          <h1 className="text-4xl md:text-5xl text-sage-900">{page.title}</h1>
+          <h1 className="text-4xl md:text-5xl text-sage-900 mb-4">{page.title}</h1>
+          {page.subtitle && (
+            <p className="text-lg text-sage-600 prose-max">{page.subtitle}</p>
+          )}
         </div>
       </section>
 
       <section className="section-padding">
-        <div className="container-wide grid gap-12 md:grid-cols-3">
-          <div className="md:col-span-2">
+        {layout === 'centered' ? (
+          <div className="container-prose">
+            <div className="prose-content text-left">
+              <RichText data={page.content} />
+            </div>
+          </div>
+        ) : layout === 'full-width' ? (
+          <div className="container-wide">
             <div className="prose-content">
               <RichText data={page.content} />
             </div>
           </div>
-
-          <ProfileSidebar />
-        </div>
+        ) : showSidebar ? (
+          <div className="container-wide grid gap-12 md:grid-cols-3">
+            <div className="md:col-span-2">
+              <div className="prose-content">
+                <RichText data={page.content} />
+              </div>
+            </div>
+            <ProfileSidebar />
+          </div>
+        ) : (
+          <div className="container-wide">
+            <div className="prose-content max-w-3xl">
+              <RichText data={page.content} />
+            </div>
+          </div>
+        )}
       </section>
     </>
   )

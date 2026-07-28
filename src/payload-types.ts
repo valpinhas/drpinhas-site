@@ -104,10 +104,12 @@ export interface Config {
   globals: {
     'site-settings': SiteSetting;
     navigation: Navigation;
+    homepage: Homepage;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     navigation: NavigationSelect<false> | NavigationSelect<true>;
+    homepage: HomepageSelect<false> | HomepageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -236,6 +238,10 @@ export interface Page {
    */
   slug: string;
   /**
+   * Tagline shown below the page title.
+   */
+  subtitle?: string | null;
+  /**
    * Short summary used for SEO and previews.
    */
   excerpt?: string | null;
@@ -255,6 +261,14 @@ export interface Page {
     [k: string]: unknown;
   };
   featuredImage?: (number | null) | Media;
+  /**
+   * Show the profile sidebar on this page.
+   */
+  showSidebar?: boolean | null;
+  /**
+   * Controls the page layout.
+   */
+  layout?: ('standard' | 'centered' | 'full-width') | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -667,9 +681,12 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  subtitle?: T;
   excerpt?: T;
   content?: T;
   featuredImage?: T;
+  showSidebar?: T;
+  layout?: T;
   meta?:
     | T
     | {
@@ -874,6 +891,18 @@ export interface SiteSetting {
    * Professional license number(s) for the footer.
    */
   licenseInfo?: string | null;
+  /**
+   * Bio text shown in the profile sidebar.
+   */
+  sidebarBio?: string | null;
+  sidebarButtons?:
+    | {
+        label: string;
+        url: string;
+        style?: ('primary' | 'secondary') | null;
+        id?: string | null;
+      }[]
+    | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -924,6 +953,59 @@ export interface Navigation {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage".
+ */
+export interface Homepage {
+  id: number;
+  /**
+   * Main heading displayed in the hero section.
+   */
+  heroHeading?: string | null;
+  /**
+   * Paragraph text below the hero heading. Falls back to the site description if empty.
+   */
+  heroDescription?: string | null;
+  heroButtons?:
+    | {
+        label: string;
+        url: string;
+        style?: ('primary' | 'secondary') | null;
+        id?: string | null;
+      }[]
+    | null;
+  welcomeHeading?: string | null;
+  welcomeText?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  welcomeLinkLabel?: string | null;
+  welcomeLinkUrl?: string | null;
+  qaHeading?: string | null;
+  qaText?: string | null;
+  qaButtons?:
+    | {
+        label: string;
+        url: string;
+        style?: ('primary' | 'secondary') | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
@@ -944,6 +1026,15 @@ export interface SiteSettingsSelect<T extends boolean = true> {
       };
   footerText?: T;
   licenseInfo?: T;
+  sidebarBio?: T;
+  sidebarButtons?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        style?: T;
+        id?: T;
+      };
   meta?:
     | T
     | {
@@ -980,6 +1071,39 @@ export interface NavigationSelect<T extends boolean = true> {
     | {
         label?: T;
         url?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage_select".
+ */
+export interface HomepageSelect<T extends boolean = true> {
+  heroHeading?: T;
+  heroDescription?: T;
+  heroButtons?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        style?: T;
+        id?: T;
+      };
+  welcomeHeading?: T;
+  welcomeText?: T;
+  welcomeLinkLabel?: T;
+  welcomeLinkUrl?: T;
+  qaHeading?: T;
+  qaText?: T;
+  qaButtons?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        style?: T;
         id?: T;
       };
   updatedAt?: T;
