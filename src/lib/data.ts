@@ -35,6 +35,28 @@ const defaultNavigation = {
   footerNav: [],
 }
 
+const defaultHomepage = {
+  heroHeading: 'Compassionate, confidential therapy for individuals and couples',
+  heroDescription:
+    'Dr. Valerie Pinhas is a sex therapist, psychoanalyst, and professor emeritus with over 50 years of experience helping people find insight, relief, and growth.',
+  heroButtons: [
+    { label: 'Schedule a Consultation', url: '/contact', style: 'primary' },
+    { label: 'Learn About Dr. Pinhas', url: '/about', style: 'secondary' },
+    { label: 'Read My Blog', url: '/blog', style: 'secondary' },
+  ],
+  welcomeHeading: 'Welcome',
+  welcomeText: null,
+  welcomeLinkLabel: 'Read more about Dr. Pinhas',
+  welcomeLinkUrl: '/about',
+  qaHeading: 'Have a question?',
+  qaText:
+    'Feel free to ask a question and check out answers posted from other visitors and students.',
+  qaButtons: [
+    { label: 'Ask a Question', url: '/ask', style: 'primary' },
+    { label: 'Browse Answers', url: '/answers', style: 'secondary' },
+  ],
+}
+
 export async function getSiteSettings() {
   try {
     const payload = await getPayloadClient()
@@ -50,6 +72,15 @@ export async function getNavigation() {
     return payload.findGlobal({ slug: 'navigation', depth: 2 })
   } catch {
     return defaultNavigation
+  }
+}
+
+export async function getHomepage() {
+  try {
+    const payload = await getPayloadClient()
+    return payload.findGlobal({ slug: 'homepage', depth: 2 })
+  } catch {
+    return defaultHomepage
   }
 }
 

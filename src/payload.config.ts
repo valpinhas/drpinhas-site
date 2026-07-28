@@ -19,6 +19,7 @@ import { Questions } from './collections/Questions'
 import { Comments } from './collections/Comments'
 import { SiteSettings } from './globals/SiteSettings'
 import { Navigation } from './globals/Navigation'
+import { Homepage } from './globals/Homepage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -43,6 +44,7 @@ export default buildConfig({
   globals: [
     SiteSettings,
     Navigation,
+    Homepage,
   ],
   editor: lexicalEditor(),
   sharp,

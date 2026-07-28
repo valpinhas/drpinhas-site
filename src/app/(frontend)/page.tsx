@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { Heart, Users, Brain, Shield, BookOpen, MessageCircle } from 'lucide-react'
-import { getPublishedServices, getPublishedPosts, getSiteSettings } from '@/lib/data'
+import { getPublishedServices, getPublishedPosts, getSiteSettings, getHomepage } from '@/lib/data'
 import { formatDate, truncate } from '@/lib/utils'
+import { RichText } from '@payloadcms/richtext-lexical/react'
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   heart: Heart,
@@ -13,11 +14,15 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
 }
 
 export default async function HomePage() {
-  const [services, recentPosts, settings] = await Promise.all([
+  const [services, recentPosts, settings, homepage] = await Promise.all([
     getPublishedServices(),
     getPublishedPosts({ limit: 3 }),
     getSiteSettings(),
+    getHomepage(),
   ])
+
+  const heroDesc = homepage.heroDescription || settings.description || ''
+  const welcomeText = homepage.welcomeText
 
   return (
     <>
@@ -26,21 +31,21 @@ export default async function HomePage() {
         <div className="container-wide">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-6xl font-serif text-sage-900 leading-tight mb-6">
-              Compassionate, confidential therapy for individuals and couples
+              {homepage.heroHeading}
             </h1>
             <p className="text-lg md:text-xl text-sage-700 leading-relaxed mb-8">
-              {settings.description || 'Dr. Valerie Pinhas is a sex therapist, psychoanalyst, and professor emeritus with over three decades of experience helping people find insight, relief, and growth.'}
+              {heroDesc}
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link href="/contact" className="btn-primary">
-                Schedule a Consultation
-              </Link>
-              <Link href="/about" className="btn-secondary">
-                Learn About Dr. Pinhas
-              </Link>
-              <Link href="/blog" className="btn-secondary">
-                Read My Blog
-              </Link>
+              {(homepage.heroButtons || []).map((btn: any, i: number) => (
+                <Link
+                  key={i}
+                  href={btn.url}
+                  className={btn.style === 'primary' ? 'btn-primary' : 'btn-secondary'}
+                >
+                  {btn.label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
@@ -50,18 +55,28 @@ export default async function HomePage() {
       {/* Welcome message */}
       <section className="section-padding">
         <div className="container-prose text-center">
-          <h2 className="text-3xl md:text-4xl text-sage-900 mb-6">Welcome</h2>
-          <p className="text-lg text-sage-700 leading-relaxed mb-4">
-            Your decision to inquire about sexual therapy, psychotherapy, couples therapy, or addictions therapy is a courageous one.
-            I wholeheartedly support your inclination to look inside yourself to obtain insight and relief.
-          </p>
-          <p className="text-lg text-sage-700 leading-relaxed mb-8">
-            My name is Dr. Valerie Pinhas. I have been a practicing sex therapist, addictions therapist, and psychoanalytic psychotherapist for over three decades.
-            I am also a professor emeritus of Human Sexuality and Alcoholism, Addictions and Abusive Behaviors at Nassau Community College.
-          </p>
-          <Link href="/about" className="text-sage-600 font-medium hover:text-sage-800 underline">
-            Read more about Dr. Pinhas &rarr;
-          </Link>
+          <h2 className="text-3xl md:text-4xl text-sage-900 mb-6">{homepage.welcomeHeading}</h2>
+          {welcomeText ? (
+            <div className="prose-content text-left">
+              <RichText data={welcomeText} />
+            </div>
+          ) : (
+            <>
+              <p className="text-lg text-sage-700 leading-relaxed mb-4">
+                Your decision to inquire about sexual therapy, psychotherapy, couples therapy, or addictions therapy is a courageous one.
+                I wholeheartedly support your inclination to look inside yourself to obtain insight and relief.
+              </p>
+              <p className="text-lg text-sage-700 leading-relaxed mb-8">
+                My name is Dr. Valerie Pinhas. I have been a practicing sex therapist, addictions therapist, and psychoanalytic psychotherapist for over 50 years.
+                I am also a professor emeritus of Human Sexuality and Alcoholism, Addictions and Abusive Behaviors at Nassau Community College.
+              </p>
+            </>
+          )}
+          {homepage.welcomeLinkLabel && homepage.welcomeLinkUrl && (
+            <Link href={homepage.welcomeLinkUrl} className="text-sage-600 font-medium hover:text-sage-800 underline">
+              {homepage.welcomeLinkLabel} &rarr;
+            </Link>
+          )}
         </div>
       </section>
 
@@ -97,13 +112,20 @@ export default async function HomePage() {
       <section className="section-padding">
         <div className="container-wide">
           <div className="rounded-3xl bg-clay-50 border border-clay-100 p-8 md:p-10 text-center">
-            <h2 className="text-3xl md:text-4xl text-clay-800 mb-4">Have a question?</h2>
+            <h2 className="text-3xl md:text-4xl text-clay-800 mb-4">{homepage.qaHeading}</h2>
             <p className="text-lg text-clay-600 prose-max mb-8 mx-auto">
-              Feel free to ask a question and check out answers posted from other visitors and students.
+              {homepage.qaText}
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="/ask" className="btn-primary">Ask a Question</Link>
-              <Link href="/answers" className="btn-secondary">Browse Answers</Link>
+              {(homepage.qaButtons || []).map((btn: any, i: number) => (
+                <Link
+                  key={i}
+                  href={btn.url}
+                  className={btn.style === 'primary' ? 'btn-primary' : 'btn-secondary'}
+                >
+                  {btn.label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
