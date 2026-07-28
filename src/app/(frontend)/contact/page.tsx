@@ -37,6 +37,9 @@ export default function ContactPage() {
                 (516) 987-6943
               </a>
             </p>
+            <p className="text-lg text-sage-700 leading-relaxed mt-4">
+              Pandemic has made remote work a viable internet option. I am available for virtual work as well.
+            </p>
           </div>
         </div>
       </section>
