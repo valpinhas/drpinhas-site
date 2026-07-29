@@ -4,6 +4,7 @@ import { Inter, Cormorant_Garamond } from 'next/font/google'
 import './globals.css'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import { JsonLd } from '@/components/seo/JsonLd'
 import { getSiteSettings, getNavigation } from '@/lib/data'
 
 const inter = Inter({
@@ -38,6 +39,14 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: settings.siteName,
       title: `${settings.siteName} — ${settings.tagline || 'Long Island Sex Therapy'}`,
       description: settings.description || '',
+      images: [
+        {
+          url: '/images/vp-profile.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'Dr. Valerie Pinhas, Long Island Sex Therapy',
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
@@ -68,6 +77,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
+      <head>
+        <JsonLd />
+      </head>
       <body className="flex min-h-screen flex-col">
         <Header
           navItems={navigation.mainNav || []}
