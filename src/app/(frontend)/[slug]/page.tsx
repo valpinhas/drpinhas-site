@@ -25,6 +25,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: page.title,
     description: page.excerpt || `${page.title} — Dr. Valerie Pinhas`,
+    alternates: {
+      canonical: `/${slug}`,
+    },
+    openGraph: {
+      title: `${page.title} | Dr. Valerie Pinhas`,
+      description: page.excerpt || `${page.title} — Dr. Valerie Pinhas`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/${slug}`,
+    },
   }
 }
 

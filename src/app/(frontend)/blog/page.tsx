@@ -5,6 +5,9 @@ import { formatDate, truncate } from '@/lib/utils'
 export const metadata = {
   title: 'Blog',
   description: 'Articles and insights from Dr. Valerie Pinhas on sex therapy, relationships, psychotherapy, and well-being.',
+  alternates: {
+    canonical: '/blog',
+  },
 }
 
 const POSTS_PER_PAGE = 12

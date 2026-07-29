@@ -5,6 +5,9 @@ import { getPublishedServices } from '@/lib/data'
 export const metadata = {
   title: 'Services',
   description: 'Sex therapy, couples therapy, psychotherapy, and addictions therapy services offered by Dr. Valerie Pinhas on Long Island.',
+  alternates: {
+    canonical: '/services',
+  },
 }
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { Heart, Users, Brain, Shield, BookOpen, MessageCircle } from 'lucide-react'
 import { getPublishedServices, getPublishedPosts, getSiteSettings, getHomepage } from '@/lib/data'
 import { formatDate, truncate } from '@/lib/utils'
@@ -11,6 +12,30 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   shield: Shield,
   'book-open': BookOpen,
   'message-circle': MessageCircle,
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [settings, homepage] = await Promise.all([
+    getSiteSettings(),
+    getHomepage(),
+  ])
+
+  const title = homepage.heroHeading
+    ? `${settings.siteName} — ${settings.tagline || 'Long Island Sex Therapy'}`
+    : `${settings.siteName} — ${settings.tagline || 'Long Island Sex Therapy'}`
+
+  return {
+    title,
+    description: homepage.heroDescription || settings.description || '',
+    alternates: {
+      canonical: '/',
+    },
+    openGraph: {
+      title,
+      description: homepage.heroDescription || settings.description || '',
+      url: process.env.NEXT_PUBLIC_SITE_URL,
+    },
+  }
 }
 
 export default async function HomePage() {

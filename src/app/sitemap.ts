@@ -5,22 +5,13 @@ import config from '@payload-config'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
+  // Only include pages that are NOT CMS-managed (those come from the pages collection query below)
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${siteUrl}/`, lastModified: new Date(), changeFrequency: 'monthly', priority: 1 },
-    { url: `${siteUrl}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${siteUrl}/services`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${siteUrl}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: `${siteUrl}/answers`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: `${siteUrl}/ask`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${siteUrl}/contact`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.5 },
-    { url: `${siteUrl}/disclaimer`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${siteUrl}/fees`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.5 },
-    { url: `${siteUrl}/links`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.4 },
-    { url: `${siteUrl}/treatment-perspectives`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${siteUrl}/psychoanalytic-psychotherapy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${siteUrl}/sex-therapy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${siteUrl}/addiction-therapy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${siteUrl}/treatment-specialties`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
   ]
 
   try {
@@ -55,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }))
 
-    // CMS pages
+    // CMS pages (about, contact, fees, disclaimer, links, treatment-*, etc.)
     const pages = await payload.find({
       collection: 'pages',
       where: { _status: { equals: 'published' } },
