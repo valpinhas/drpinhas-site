@@ -1,11 +1,10 @@
 import type { MetadataRoute } from 'next'
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import { sanityFetch } from '@/lib/sanity'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
-  // Only include pages that are NOT CMS-managed (those come from the pages collection query below)
+  // Only include pages that are NOT CMS-managed (those come from the pages query below)
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${siteUrl}/`, lastModified: new Date(), changeFrequency: 'monthly', priority: 1 },
     { url: `${siteUrl}/services`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
@@ -14,54 +13,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/ask`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
   ]
 
-  try {
-    const payload = await getPayload({ config })
+  // All queries run against Sanity. If Sanity is unreachable the
+  // sanityFetch helper returns null and we fall back to static pages only.
+  const [posts, services, pages] = await Promise.all([
+    sanityFetch(`*[_type == "post" && slug.current != null] | order(publishedAt desc) {
+      "url": slug.current, "lastModified": coalesce(publishedAt, _updatedAt)
+    }`),
+    sanityFetch(`*[_type == "service" && slug.current != null] {
+      "url": slug.current, "lastModified": _updatedAt
+    }`),
+    sanityFetch(`*[_type == "page" && slug.current != null] {
+      "url": slug.current, "lastModified": _updatedAt
+    }`),
+  ])
 
-    // Blog posts
-    const posts = await payload.find({
-      collection: 'posts',
-      where: { _status: { equals: 'published' } },
-      limit: 100,
-      sort: '-publishedAt',
-    })
+  const postEntries: MetadataRoute.Sitemap = (posts || []).map((post: any) => ({
+    url: `${siteUrl}/blog/${post.url}`,
+    lastModified: new Date(post.lastModified),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }))
 
-    const postEntries: MetadataRoute.Sitemap = posts.docs.map((post: any) => ({
-      url: `${siteUrl}/blog/${post.slug}`,
-      lastModified: post.updatedAt || post.publishedAt || new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    }))
+  const serviceEntries: MetadataRoute.Sitemap = (services || []).map((service: any) => ({
+    url: `${siteUrl}/services/${service.url}`,
+    lastModified: new Date(service.lastModified),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
 
-    // Services
-    const services = await payload.find({
-      collection: 'services',
-      where: { _status: { equals: 'published' } },
-      limit: 50,
-    })
+  const pageEntries: MetadataRoute.Sitemap = (pages || []).map((page: any) => ({
+    url: `${siteUrl}/${page.url}`,
+    lastModified: new Date(page.lastModified),
+    changeFrequency: 'monthly' as const,
+    priority: 0.5,
+  }))
 
-    const serviceEntries: MetadataRoute.Sitemap = services.docs.map((service: any) => ({
-      url: `${siteUrl}/services/${service.slug}`,
-      lastModified: service.updatedAt || new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    }))
-
-    // CMS pages (about, contact, fees, disclaimer, links, treatment-*, etc.)
-    const pages = await payload.find({
-      collection: 'pages',
-      where: { _status: { equals: 'published' } },
-      limit: 50,
-    })
-
-    const pageEntries: MetadataRoute.Sitemap = pages.docs.map((page: any) => ({
-      url: `${siteUrl}/${page.slug}`,
-      lastModified: page.updatedAt || new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    }))
-
-    return [...staticPages, ...postEntries, ...serviceEntries, ...pageEntries]
-  } catch {
-    return staticPages
-  }
+  return [...staticPages, ...postEntries, ...serviceEntries, ...pageEntries]
 }

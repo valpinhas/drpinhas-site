@@ -1,21 +1,11 @@
 import { notFound } from 'next/navigation'
-import { getPublishedPages } from '@/lib/data'
-import { getPayloadClient } from '@/lib/utils'
-import { RichText } from '@payloadcms/richtext-lexical/react'
+import { getPublishedPages, getAllPageSlugs } from '@/lib/data'
+import { RichText } from '@/components/RichText'
 import { ProfileSidebar } from '@/components/layout/ProfileSidebar'
 
 export async function generateStaticParams() {
-  try {
-    const payload = await getPayloadClient()
-    const pages = await payload.find({
-      collection: 'pages',
-      where: { _status: { equals: 'published' } },
-      limit: 100,
-    })
-    return pages.docs.map((page: any) => ({ slug: page.slug }))
-  } catch {
-    return []
-  }
+  const slugs = await getAllPageSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

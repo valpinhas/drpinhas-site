@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getServiceBySlug, getPublishedServices } from '@/lib/data'
-import { RichText } from '@payloadcms/richtext-lexical/react'
+import { RichText } from '@/components/RichText'
 import { ProfileSidebar } from '@/components/layout/ProfileSidebar'
 
 export async function generateStaticParams() {
