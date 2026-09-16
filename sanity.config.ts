@@ -3,10 +3,10 @@ import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
 import { schemaTypes } from './sanity/schemas'
 
-// Locally:  SANITY_STUDIO_PROJECT_ID and SANITY_STUDIO_DATASET come from .env.local or shell.
-// On Vercel: set them in the project's environment variables.
-const projectId = process.env.SANITY_STUDIO_PROJECT_ID || 'your-project-id'
-const dataset = process.env.SANITY_STUDIO_DATASET || 'production'
+// Env vars (NEXT_PUBLIC_* are inlined by Next.js for the embedded Studio):
+//   NEXT_PUBLIC_SANITY_PROJECT_ID, NEXT_PUBLIC_SANITY_DATASET
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'your-project-id'
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
 
 export default defineConfig({
   name: 'drpinhas-site',
