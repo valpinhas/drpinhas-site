@@ -1,6 +1,7 @@
-import { getPayloadClient } from './utils'
+import { sanityFetch } from './sanity'
 
-// Fallback defaults used when the database is not available (e.g. during build without DB)
+// ── Fallback defaults (used when Sanity is unreachable, e.g. first build) ──
+
 const defaultSettings = {
   siteName: 'Long Island Sex Therapy',
   tagline: 'Dr. Valerie Pinhas',
@@ -12,6 +13,13 @@ const defaultSettings = {
   licenseInfo: '',
   socialLinks: [],
   logo: null,
+  sidebarBio:
+    'I am a therapist who has been practicing sexual therapy, addictions therapy as well as psychoanalytic psychotherapy and psychoanalysis for over 50 years.',
+  sidebarButtons: [
+    { label: 'Learn More', url: '/about', style: 'primary' },
+    { label: 'Read My Blog', url: '/blog', style: 'secondary' },
+    { label: 'Ask a Question', url: '/ask', style: 'secondary' },
+  ],
 }
 
 const defaultNavigation = {
@@ -32,7 +40,21 @@ const defaultNavigation = {
     { label: 'Links', url: '/links' },
     { label: 'Disclaimer', url: '/disclaimer' },
   ],
-  footerNav: [],
+  footerNav: [
+    { label: 'About', url: '/about' },
+    { label: 'Services', url: '/services' },
+    { label: 'Treatment Specialties', url: '/treatment-specialties' },
+    { label: 'Sex Therapy', url: '/sex-therapy' },
+    { label: 'Psychoanalytic Psychotherapy', url: '/psychoanalytic-psychotherapy' },
+    { label: 'Addiction Therapy', url: '/addiction-therapy' },
+    { label: 'Treatment Perspectives', url: '/treatment-perspectives' },
+    { label: 'Fees & Insurance', url: '/fees' },
+    { label: 'Blog', url: '/blog' },
+    { label: 'Q&A', url: '/answers' },
+    { label: 'Links', url: '/links' },
+    { label: 'Contact', url: '/contact' },
+    { label: 'Disclaimer', url: '/disclaimer' },
+  ],
 }
 
 const defaultHomepage = {
@@ -57,169 +79,146 @@ const defaultHomepage = {
   ],
 }
 
+// ── Globals ───────────────────────────────────────────────────────
+
 export async function getSiteSettings() {
-  try {
-    const payload = await getPayloadClient()
-    return payload.findGlobal({ slug: 'site-settings', depth: 2 })
-  } catch {
-    return defaultSettings
-  }
+  const result = await sanityFetch(`*[_type == "siteSettings"][0]{
+    siteName, tagline, description, contactEmail, phoneNumber, address,
+    officeHours, licenseInfo, sidebarBio,
+    "socialLinks": socialLinks[]{platform, url},
+    "logo": logo.asset->url
+  }`)
+  return result || defaultSettings
 }
 
 export async function getNavigation() {
-  try {
-    const payload = await getPayloadClient()
-    return payload.findGlobal({ slug: 'navigation', depth: 2 })
-  } catch {
-    return defaultNavigation
-  }
+  const result = await sanityFetch(`*[_type == "navigation"][0]{
+    "mainNav": mainNav[]{label, url, newTab, "children": children[]{label, url}},
+    "footerNav": footerNav[]{label, url}
+  }`)
+  return result || defaultNavigation
 }
 
 export async function getHomepage() {
-  try {
-    const payload = await getPayloadClient()
-    return payload.findGlobal({ slug: 'homepage', depth: 2 })
-  } catch {
-    return defaultHomepage
-  }
+  const result = await sanityFetch(`*[_type == "homepage"][0]{
+    heroHeading, heroDescription,
+    "heroButtons": heroButtons[]{label, url, style},
+    welcomeHeading, welcomeText, welcomeLinkLabel, welcomeLinkUrl,
+    qaHeading, qaText,
+    "qaButtons": qaButtons[]{label, url, style}
+  }`)
+  return result || defaultHomepage
 }
 
-export async function getPublishedPosts({ limit = 10, page = 1, category }: { limit?: number; page?: number; category?: string } = {}) {
-  try {
-    const payload = await getPayloadClient()
-    return payload.find({
-      collection: 'posts',
-      where: { _status: { equals: 'published' } },
-      limit,
-      page,
-      sort: '-publishedAt',
-      depth: 2,
-      ...(category ? { where: { 'category.slug': { equals: category } } } : {}),
-    })
-  } catch {
-    return { docs: [], totalPages: 1, page: 1 }
+// ── Posts ─────────────────────────────────────────────────────────
+
+export async function getPublishedPosts({
+  limit = 10,
+  page = 1,
+  category,
+}: { limit?: number; page?: number; category?: string } = {}) {
+  const start = (page - 1) * limit
+  const query = category
+    ? `{
+        "docs": *[_type == "post" && slug.current != null && category->slug.current == $category] | order(publishedAt desc) [$start...$end] {
+          ..., "slug": slug.current, "id": _id, "category": category->{title, "slug": slug.current},
+          "featuredImage": featuredImage{..., "url": asset->url}
+        },
+        "total": count(*[_type == "post" && category->slug.current == $category]),
+        "page": $page
+      }`
+    : `{
+        "docs": *[_type == "post" && slug.current != null] | order(publishedAt desc) [$start...$end] {
+          ..., "slug": slug.current, "id": _id, "category": category->{title, "slug": slug.current},
+          "featuredImage": featuredImage{..., "url": asset->url}
+        },
+        "total": count(*[_type == "post" && slug.current != null]),
+        "page": $page
+      }`
+
+  const result = await sanityFetch(query, { start, end: start + limit, page, category })
+  if (!result) return { docs: [], totalPages: 1, page: 1 }
+  return {
+    docs: result.docs || [],
+    totalPages: Math.max(1, Math.ceil((result.total || 0) / limit)),
+    page: result.page || 1,
   }
 }
 
 export async function getPostBySlug(slug: string) {
-  try {
-    const payload = await getPayloadClient()
-    const result = await payload.find({
-      collection: 'posts',
-      where: {
-        and: [
-          { slug: { equals: slug } },
-          { _status: { equals: 'published' } },
-        ],
-      },
-      depth: 2,
-      limit: 1,
-    })
-    return result.docs[0] || null
-  } catch {
-    return null
-  }
+  return sanityFetch(`*[_type == "post" && slug.current == $slug][0]{
+    ..., "slug": slug.current, "id": _id,
+    "category": category->{title, "slug": slug.current},
+    "featuredImage": featuredImage{..., "url": asset->url}
+  }`, { slug })
 }
+
+// ── Pages ─────────────────────────────────────────────────────────
 
 export async function getPublishedPages(slug: string) {
-  try {
-    const payload = await getPayloadClient()
-    const result = await payload.find({
-      collection: 'pages',
-      where: {
-        and: [
-          { slug: { equals: slug } },
-          { _status: { equals: 'published' } },
-        ],
-      },
-      depth: 2,
-      limit: 1,
-    })
-    return result.docs[0] || null
-  } catch {
-    return null
-  }
+  return sanityFetch(`*[_type == "page" && slug.current == $slug][0]{
+    ..., "slug": slug.current, "id": _id
+  }`, { slug })
 }
 
+export async function getAllPageSlugs(): Promise<string[]> {
+  const result = await sanityFetch(`*[_type == "page" && slug.current != null].slug.current`)
+  return result || []
+}
+
+// ── Services ──────────────────────────────────────────────────────
+
 export async function getPublishedServices() {
-  try {
-    const payload = await getPayloadClient()
-    return payload.find({
-      collection: 'services',
-      where: { _status: { equals: 'published' } },
-      sort: 'order',
-      depth: 2,
-    })
-  } catch {
-    return { docs: [] }
-  }
+  const result = await sanityFetch(`*[_type == "service" && slug.current != null] | order(order asc) {
+    ..., "slug": slug.current, "id": _id,
+    "featuredImage": featuredImage{..., "url": asset->url}
+  }`)
+  return { docs: result || [] }
 }
 
 export async function getServiceBySlug(slug: string) {
-  try {
-    const payload = await getPayloadClient()
-    const result = await payload.find({
-      collection: 'services',
-      where: {
-        and: [
-          { slug: { equals: slug } },
-          { _status: { equals: 'published' } },
-        ],
-      },
-      depth: 2,
-      limit: 1,
-    })
-    return result.docs[0] || null
-  } catch {
-    return null
-  }
+  return sanityFetch(`*[_type == "service" && slug.current == $slug][0]{
+    ..., "slug": slug.current, "id": _id,
+    "featuredImage": featuredImage{..., "url": asset->url}
+  }`, { slug })
 }
+
+export async function getAllServiceSlugs(): Promise<string[]> {
+  const result = await sanityFetch(`*[_type == "service" && slug.current != null].slug.current`)
+  return result || []
+}
+
+// ── Questions ─────────────────────────────────────────────────────
 
 export async function getAnsweredQuestions({ limit = 10, page = 1 }: { limit?: number; page?: number } = {}) {
-  try {
-    const payload = await getPayloadClient()
-    return payload.find({
-      collection: 'questions',
-      where: {
-        and: [
-          { _status: { equals: 'published' } },
-          { answer: { exists: true } },
-        ],
-      },
-      limit,
-      page,
-      sort: '-answeredAt',
-      depth: 1,
-    })
-  } catch {
-    return { docs: [] }
+  const start = (page - 1) * limit
+  const result = await sanityFetch(`{
+    "docs": *[_type == "question" && defined(answer)] | order(answeredAt desc) [$start...$end],
+    "total": count(*[_type == "question" && defined(answer)])
+  }`, { start, end: start + limit })
+  if (!result) return { docs: [], totalPages: 1, page: 1 }
+  return {
+    docs: result.docs || [],
+    totalPages: Math.max(1, Math.ceil((result.total || 0) / limit)),
+    page,
   }
 }
+
+// ── Categories ───────────────────────────────────────────────────
 
 export async function getCategories() {
-  try {
-    const payload = await getPayloadClient()
-    return payload.find({
-      collection: 'categories',
-      limit: 50,
-      depth: 1,
-    })
-  } catch {
-    return { docs: [] }
-  }
+  const result = await sanityFetch(`*[_type == "category"]{
+    title, "slug": slug.current, description, "id": _id
+  }`)
+  return { docs: result || [] }
 }
 
+// ── Comments ─────────────────────────────────────────────────────
+
 export async function getCommentsByPost(postId: string) {
-  try {
-    const payload = await getPayloadClient()
-    return payload.find({
-      collection: 'comments',
-      where: { post: { equals: postId } },
-      sort: 'createdAt',
-      depth: 1,
-      limit: 100,
-    })
-  } catch {
-    return { docs: [] }
-  }
+  const result = await sanityFetch(`*[_type == "comment" && post._ref == $postId] | order(commentedAt asc) {
+    ..., "id": _id, "createdAt": commentedAt,
+    "parentComment": {"id": parentComment._ref}
+  }`, { postId })
+  return { docs: result || [] }
 }

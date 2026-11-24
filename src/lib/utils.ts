@@ -1,10 +1,3 @@
-import { getPayload } from 'payload'
-import config from '@payload-config'
-
-export const getPayloadClient = async () => {
-  return getPayload({ config })
-}
-
 export const formatDate = (date: string | Date) => {
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',

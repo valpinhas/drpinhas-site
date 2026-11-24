@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPostBySlug, getPublishedPosts, getCommentsByPost } from '@/lib/data'
 import { formatDate } from '@/lib/utils'
-import { RichText } from '@payloadcms/richtext-lexical/react'
+import { RichText } from '@/components/RichText'
 
 export async function generateStaticParams() {
   try {

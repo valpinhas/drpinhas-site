@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { Heart, Users, Brain, Shield, BookOpen, MessageCircle } from 'lucide-react'
 import { getPublishedServices, getPublishedPosts, getSiteSettings, getHomepage } from '@/lib/data'
 import { formatDate, truncate } from '@/lib/utils'
-import { RichText } from '@payloadcms/richtext-lexical/react'
+import { RichText } from '@/components/RichText'
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   heart: Heart,

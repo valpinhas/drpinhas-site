@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getAnsweredQuestions } from '@/lib/data'
 import { formatDate } from '@/lib/utils'
-import { RichText } from '@payloadcms/richtext-lexical/react'
+import { RichText } from '@/components/RichText'
 
 export const metadata = {
   title: 'Q&A Answers',
